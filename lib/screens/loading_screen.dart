@@ -4,7 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -18,6 +18,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
     getLocation();
+    getData();
   }
 
   void getLocation() async {
@@ -36,7 +37,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Uri url = Uri.parse(
         'http://api.openweathermap.org/geo/1.0/reverse?lat=${position.latitude}&lon=${position.longitude}&limit={limit}&appid={API key}');
 
-    Response response = await get(url);
+    http.Response response = await http.get(url);
     log('Yes');
     log('response is $response');
   }
