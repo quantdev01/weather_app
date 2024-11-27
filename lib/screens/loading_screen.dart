@@ -3,11 +3,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:weather_app/screens/location_screen.dart';
-import 'package:weather_app/services/networking.dart';
-
-const apiKey = '';
+import 'package:weather_app/services/weather.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -24,25 +21,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getLocationData() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      await Geolocator.requestPermission();
-    }
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
-
-    NetworkHelper networkHelper = NetworkHelper(
-        'http://api.openweathermap.org/geo/1.0/reverse?lat=${position.latitude}&lon=${position.longitude}&limit={limit}&appid=$apiKey&units=metric');
-
-    var weatherData = await networkHelper.getData();
-
+    WeatherModel weather = WeatherModel();
+    dynamic weatherData = await weather.getWeatherData();
     // ignore: use_build_context_synchronously
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return LocationScreen(
         locationWeather: weatherData,
       );
     }));
-    log("The user location is ${position.latitude} and long is ${position.longitude}");
+    log("The user location is ${weatherData.latitude} and long is ${weatherData.longitude}");
   }
 
   @override
