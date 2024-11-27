@@ -1,16 +1,41 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:weather_app/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({super.key});
+  const LocationScreen({
+    super.key,
+    this.locationWeather,
+  });
+
+  final locationWeather;
 
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    log('get the location data from the other page');
+    log(widget.locationWeather);
+    updateUi(widget.locationWeather);
+  }
+
+  late int temperature;
+  late int conditionNumber;
+  late String cityName;
+
+  void updateUi(dynamic weatherData) {
+    temperature = weatherData['main']['temp'];
+    conditionNumber = weatherData['weather'][0]['id'];
+    cityName = weatherData['name'];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,15 +73,15 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 15.0),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0),
                 child: Row(
                   children: <Widget>[
                     Text(
-                      '32°',
+                      '${temperature.toInt()}°',
                       style: kTempTextStyle,
                     ),
-                    Text(
+                    const Text(
                       '☀️',
                       style: kConditionTextStyle,
                     ),
@@ -78,7 +103,3 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 }
-
-// double temperature = decodedData['main']['temp'];
-// int conditionNumber = decodedData['weather'][0]['id'];
-// String cityName = decodedData['name'];
