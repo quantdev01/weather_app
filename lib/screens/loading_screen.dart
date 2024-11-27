@@ -3,8 +3,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
+import 'package:weather_app/screens/location_screen.dart';
+import 'package:weather_app/services/networking.dart';
+
+const apiKey = '';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -14,46 +18,42 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  double latitude = 0;
+  double longitude = 0;
+
   @override
   void initState() {
     super.initState();
-    getLocation();
-    getData();
+    getLocationData();
   }
 
-  void getLocation() async {
+  void getLocationData() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       await Geolocator.requestPermission();
     }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
+    latitude = position.latitude;
+    longitude = position.longitude;
+
+    NetworkHelper networkHelper = NetworkHelper(
+        'http://api.openweathermap.org/geo/1.0/reverse?lat=$latitude&lon=$longitude&limit={limit}&appid=$apiKey');
+
+    var weatherData = await networkHelper.getData();
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const LocationScreen();
+    }));
     log("The user location is ${position.latitude} and long is ${position.longitude}");
-  }
-
-  void getData() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
-    Uri url = Uri.parse(
-        'http://api.openweathermap.org/geo/1.0/reverse?lat=${position.latitude}&lon=${position.longitude}&limit={limit}&appid={API key}');
-
-    http.Response response = await http.get(url);
-    log('Yes');
-    log('response is $response');
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: TextButton(
-          onPressed: () async {
-            //Get the current location
-            getLocation();
-            getData();
-          },
-          child: const Text('Get Location'),
+        child: CircularProgressIndicator(
+          color: Colors.black12,
         ),
       ),
     );
