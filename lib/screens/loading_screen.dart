@@ -21,15 +21,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getLocationData() async {
-    WeatherModel weather = WeatherModel();
-    dynamic weatherData = await weather.getWeatherData();
-    // ignore: use_build_context_synchronously
+    var weatherData = WeatherModel().getLocationWeather();
+
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return LocationScreen(
         locationWeather: weatherData,
       );
     }));
-    log("The user location is ${weatherData.latitude} and long is ${weatherData.longitude}");
+    log("The user location is $weatherData");
   }
 
   @override

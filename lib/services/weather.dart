@@ -1,10 +1,23 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:weather_app/services/location.dart';
 import 'package:weather_app/services/networking.dart';
 
-const apiKey = '';
+const apiKey = '2a14a4be9b695f06fb2be8048e9e585f';
 const myUrl = 'http://api.openweathermap.org/geo/1.0/reverse';
 
 class WeatherModel {
+  Future<dynamic> getLocationWeather() async {
+    Location location = Location();
+    await location.getCurrentLocation();
+
+    NetworkHelper networkHelper = NetworkHelper(
+        'https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=${location.latitude}&lon=${location.longitude}&dt={time}&appid=$apiKey');
+
+    var weatherData = await networkHelper.getData();
+
+    return weatherData;
+  }
+
   Future<dynamic> getWeatherData() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
