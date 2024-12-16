@@ -13,9 +13,10 @@ class WeatherModel {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
 
+    // NetworkHelper networkHelper = NetworkHelper(
+    //     '$myUrl?lat=${position.latitude}&lon=${position.longitude}&limit={limit}&appid=$apiKey&units=metric');
     NetworkHelper networkHelper = NetworkHelper(
-        '$myUrl?lat=${position.latitude}&lon=${position.longitude}&limit={limit}&appid=$apiKey&units=metric');
-
+        'https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=${position.latitude}&lon=${position.longitude}&dt={time}&appid=2a14a4be9b695f06fb2be8048e9e585f');
     var weatherData = await networkHelper.getData();
 
     return weatherData;
