@@ -23,7 +23,7 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     super.initState();
     log('get the location data from the other page');
-    log(widget.locationWeather);
+    log(widget.locationWeather.toString());
     updateUi(widget.locationWeather);
   }
 
